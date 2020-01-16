@@ -25,6 +25,13 @@ const jsonSample = `{
     ]
 }`
 
+const json2 = `{
+    "block": "warning",
+    "content": [
+        { "block": "placeholder", "mods": { "size": "xl" } }
+    ]
+}`
+
 const astSettings = {
     loc: true
 }
@@ -32,7 +39,7 @@ const astSettings = {
 const errors = []
 
 jsonTraversal(
-    parse(jsonSample, astSettings),
+    parse(json2, astSettings),
     errors,
     validatorResolver
 )

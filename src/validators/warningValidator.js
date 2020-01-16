@@ -1,6 +1,7 @@
 const traverseJson = require('../jsonTraversal')
 const getBlockName = require('../utils/getBlockName')
-const sizes = require('../utils/constsSizes')
+const textSizes = require('../consts/textSizes')
+const placeholderSizes = require('../consts/placeholderSizes')
 
 class WarningValidator {
     constructor(block, errors) {
@@ -24,7 +25,9 @@ class WarningValidator {
         switch (getBlockName(block)) {
             case 'text':
                 this.checkTextSizes(block)
-                break;
+                break
+            case 'placeholder':
+                this.checkPlaceholderSize(block)
         }
     }
 
@@ -43,8 +46,8 @@ class WarningValidator {
             }
         })
 
-        // FIXME: Прерывать дальнейшую проверку, если нашлась ошибка
-        if (this.textSize !== sizeMod || !sizes.includes(sizeMod)) 
+        // FIXME: Прерывать дальнейшую проверку, если нашлась ошибка    
+        if (this.textSize !== sizeMod || !textSizes.includes(sizeMod)) 
             this.errors.push(
                 {
                     'code': 'WARNING.TEXT_SIZES_SHOULD_BE_EQUAL',
@@ -56,7 +59,33 @@ class WarningValidator {
                 }
             )
     }
-    
+
+    checkPlaceholderSize(block) {
+        let placeholderSize = null
+
+        block.children.forEach(child => {
+            if (child.key.value === 'mods') {
+                const mods = child.value
+                
+                placeholderSize = mods.children.find(mod => 
+                    mod.key.value === 'size'
+                ).value.value
+            }
+        })
+
+        // FIXME: Прерывать дальнейшую проверку, если нашлась ошибка    
+        if (!placeholderSizes.includes(placeholderSize)) 
+            this.errors.push(
+                {
+                    'code': 'WARNING.INVALID_PLACEHOLDER_SIZE',
+                    'error': 'Недопустимый размер placeholder',
+                    'location': {
+                        'start': { 'column': this.loc.start.column, 'line': this.loc.start.line },
+                        'end': { 'column': this.loc.end.column, 'line': this.loc.end.line }
+                    }
+                }
+            )
+    }
 }
 
 module.exports = WarningValidator
