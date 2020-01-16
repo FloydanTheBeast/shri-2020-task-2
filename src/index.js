@@ -28,6 +28,9 @@ const astSettings = {
     loc: true
 }
 
+const errors = []
+
 jsonTraversal(
-    parse(jsonSample, astSettings)
+    parse(jsonSample, astSettings),
+    errors
 )

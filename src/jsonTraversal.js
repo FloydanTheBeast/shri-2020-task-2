@@ -1,3 +1,5 @@
+const validate = require('./validator')
+
 const traverseJson = (data, errors) => {
     const { type } = data
 
@@ -8,12 +10,12 @@ const traverseJson = (data, errors) => {
                 acc && child.key.value !== 'elem'
             ), true)
             
-            if (isBlock) {} // TODO: Запустить проверку 
+            if (isBlock) validate(data, errors) // TODO: Запустить проверку 
 
             data.children.forEach(child => traverseJson(child, errors))
             break
         case 'Property':
-            if (data.key.value === 'content') traverseJson(data.key, error)
+            if (data.key.value === 'content') traverseJson(data.key, errors)
             break
         case 'Array':
             data.children.forEach(child => traverseJson(child, error))
