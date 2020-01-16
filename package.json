@@ -1,0 +1,14 @@
+{
+  "name": "shri-2020-task-2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Abdelsalam Shadi <floydanthebeast@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "json-to-ast": "^2.1.0"
+  }
+}
