@@ -1,5 +1,6 @@
 const parse = require('json-to-ast')
 const jsonTraversal = require('./jsonTraversal')
+const validatorResolver = require('./validatorResolver')
 
 const jsonSample = `{
     "block": "warning",
@@ -32,5 +33,8 @@ const errors = []
 
 jsonTraversal(
     parse(jsonSample, astSettings),
-    errors
+    errors,
+    validatorResolver
 )
+
+console.log(errors)

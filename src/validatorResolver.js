@@ -1,8 +1,7 @@
 const getBlockName = require('./utils/getBlockName')
 const WarningValidator = require('./validators/warningValidator')
 
-const validate = (block, errors) => {
-    
+const resolveValidator = (block, errors) => {
     switch (getBlockName(block)) {
         case 'warning':
             const warningValidator = new WarningValidator(block, errors)
@@ -19,4 +18,4 @@ const validate = (block, errors) => {
     }
 }
 
-module.exports = validate
+module.exports = resolveValidator
