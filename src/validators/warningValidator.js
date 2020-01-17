@@ -8,8 +8,10 @@ class WarningValidator {
         this.children = block.children
         this.loc = block.loc
         this.content = block.children.find(child => child.key.value === 'content')
-        this.textSize = null
+        this.primarySize = null
         this.errors = errors
+
+        this.postProcessors = []
     }
 
     validate() {
@@ -20,12 +22,17 @@ class WarningValidator {
     }
 
     blockValidatorResolver(block) {
+        console.log(getBlockName(block))
         switch (getBlockName(block)) {
             case 'text':
                 this.checkTextSizes(block)
                 break
+            case 'button':
+                this.checkButtonSize(block)
+                break
             case 'placeholder':
                 this.checkPlaceholderSize(block)
+                break
         }
     }
 
@@ -40,12 +47,15 @@ class WarningValidator {
                     mod.key.value === 'size'
                 ).value.value
 
-                if (this.textSize === null) this.textSize = sizeMod
+                if (this.primarySize === null) {
+                    this.postProcessors.forEach(postProcessor => postProcessor.call())
+                    this.primarySize = sizeMod
+                }
             }
         })
 
         // FIXME: Прерывать дальнейшую проверку, если нашлась ошибка    
-        if (this.textSize !== sizeMod || !textSizes.includes(sizeMod)) 
+        if (this.primarySize !== sizeMod || !textSizes.includes(sizeMod)) 
             this.errors.push(
                 {
                     'code': 'WARNING.TEXT_SIZES_SHOULD_BE_EQUAL',
@@ -56,6 +66,41 @@ class WarningValidator {
                     }
                 }
             )
+    }
+
+    checkButtonSize(block) {
+        // Если эталонный размер ещё не найден, то откладываем проверку
+        console.log(block)
+        if (!this.primarySize) 
+            this.postProcessors.push(this.checkButtonSize.bind(this))
+        else {
+            block.children.forEach(prop => {
+                if (prop.key.value === 'mods')
+                    prop.value.children.forEach(mod => {
+                        if (mod.key.value === 'size') {
+                            let textSizeIndex = textSizes.findIndex(
+                                textSize => textSize === this.primarySize
+                            )
+
+                            let btnSizeIndex = textSizes.findIndex(
+                                textSize => textSize === mod.value.value
+                            )
+
+                            if (textSizeIndex !== btnSizeIndex - 1)
+                                this.errors.push(
+                                    {
+                                        'code': 'WARNING.INVALID_BUTTON_SIZE',
+                                        'error': 'Недопустимый размер button',
+                                        'location': {
+                                            'start': { 'column': block.loc.start.column, 'line': block.loc.start.line },
+                                            'end': { 'column': block.loc.end.column, 'line': block.loc.end.line }
+                                        }
+                                    }
+                                )
+                        }
+                    })
+            })
+        }
     }
 
     checkPlaceholderSize(block) {
