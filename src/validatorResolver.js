@@ -1,5 +1,6 @@
 const getBlockName = require('./utils/getBlockName')
 const WarningValidator = require('./validators/warningValidator')
+const GridValidator = require('./validators/gridValidator')
 
 const resolveValidator = (block, errors) => {
     switch (getBlockName(block)) {
@@ -11,7 +12,8 @@ const resolveValidator = (block, errors) => {
             // TODO: Проверка 'text'
             break
         case 'grid':
-            // TODO: Проверка 'grid'
+            const gridValidator = new GridValidator(block, errors)
+            gridValidator.validate()
             break
         default:
             break

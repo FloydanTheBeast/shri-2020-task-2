@@ -10,8 +10,6 @@ class WarningValidator {
         this.content = block.children.find(child => child.key.value === 'content')
         this.textSize = null
         this.errors = errors
-
-        this.has
     }
 
     validate() {

@@ -21,8 +21,6 @@ const traverseJson = (data, errors, validator) => {
         case 'Array':
             data.children.forEach(child => traverseJson(child, errors, validator))
             break
-        case 'Identifier':
-        case 'Literal':
         default:
             break
     }

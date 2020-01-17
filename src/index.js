@@ -3,34 +3,37 @@ const jsonTraversal = require('./jsonTraversal')
 const validatorResolver = require('./validatorResolver')
 
 const jsonSample = `{
-    "block": "warning",
+    "block": "grid",
+    "mods": {
+        "m-columns": "10"
+    },
     "content": [
         {
-            "block": "placeholder",
-            "mods": { "size": "m" }
-        },
-        {
-            "elem": "content",
+            "block": "grid",
+            "elem": "fraction",
+            "elemMods": {
+                "m-col": "2"
+            },
             "content": [
                 {
-                    "block": "text",
-                    "mods": { "size": "m" }
-                },
+                    "block": "payment"
+                }
+            ]
+        },
+        {
+            "block": "grid",
+            "elem": "fraction",
+            "elemMods": {
+                "m-col": "8"
+            },
+            "content": [
                 {
-                    "block": "text",
-                    "mods": { "size": "l" }
+                    "block": "offer"
                 }
             ]
         }
     ]
-}`
-
-const json2 = `{
-    "block": "warning",
-    "content": [
-        { "block": "placeholder", "mods": { "size": "xl" } }
-    ]
-}`
+ }`
 
 const astSettings = {
     loc: true
@@ -39,7 +42,7 @@ const astSettings = {
 const errors = []
 
 jsonTraversal(
-    parse(json2, astSettings),
+    parse(jsonSample, astSettings),
     errors,
     validatorResolver
 )
