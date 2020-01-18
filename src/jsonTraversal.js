@@ -1,6 +1,6 @@
 const traverseJson = (data, errors, validator) => {
     const { type } = data
-
+    
     switch (type) {
         case 'Object':
             const isBlock = data.children.reduce((acc, child) => (

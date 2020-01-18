@@ -2,6 +2,7 @@ const traverseJson = require('../jsonTraversal')
 const getBlockName = require('../utils/getBlockName')
 const textSizes = require('../consts/textSizes')
 const placeholderSizes = require('../consts/placeholderSizes')
+const compareLocation = require('../utils/compareLocation')
 
 class WarningValidator {
     constructor(block, errors) {
@@ -12,6 +13,7 @@ class WarningValidator {
         this.errors = errors
 
         this.postProcessors = []
+        this.placeholder = null
     }
 
     validate() {
@@ -19,16 +21,17 @@ class WarningValidator {
             this.content.value.children.forEach(child => {
                 traverseJson(child, this.errors, this.blockValidatorResolver.bind(this))
             })
+        this.postProcessors.forEach(postProcessor => postProcessor.call())
     }
 
     blockValidatorResolver(block) {
-        console.log(getBlockName(block))
         switch (getBlockName(block)) {
             case 'text':
                 this.checkTextSizes(block)
                 break
             case 'button':
                 this.checkButtonSize(block)
+                this.postProcessors.push(this.checkPlaceholderBeforeButton.bind(this, block))
                 break
             case 'placeholder':
                 this.checkPlaceholderSize(block)
@@ -48,7 +51,6 @@ class WarningValidator {
                 ).value.value
 
                 if (this.primarySize === null) {
-                    this.postProcessors.forEach(postProcessor => postProcessor.call())
                     this.primarySize = sizeMod
                 }
             }
@@ -70,9 +72,8 @@ class WarningValidator {
 
     checkButtonSize(block) {
         // Если эталонный размер ещё не найден, то откладываем проверку
-        console.log(block)
         if (!this.primarySize) 
-            this.postProcessors.push(this.checkButtonSize.bind(this))
+            this.postProcessors.push(this.checkButtonSize.bind(this, block))
         else {
             block.children.forEach(prop => {
                 if (prop.key.value === 'mods')
@@ -103,7 +104,22 @@ class WarningValidator {
         }
     }
 
+    checkPlaceholderBeforeButton(block) {
+        if (this.placeholder && !compareLocation(this.placeholder, block))
+            this.errors.push(
+                {
+                    'code': 'WARNING.INVALID_BUTTON_POSITION',
+                    'error': 'Блок button не может находиться выше блока placeholder',
+                    'location': {
+                        'start': { 'column': block.loc.start.column, 'line': block.loc.start.line },
+                        'end': { 'column': block.loc.end.column, 'line': block.loc.end.line }
+                    }
+                }
+            )
+    }
+
     checkPlaceholderSize(block) {
+        this.placeholder = block
         let placeholderSize = null
 
         block.children.forEach(child => {
@@ -115,7 +131,7 @@ class WarningValidator {
                 ).value.value
             }
         })
-
+        
         // FIXME: Прерывать дальнейшую проверку, если нашлась ошибка    
         if (!placeholderSizes.includes(placeholderSize)) 
             this.errors.push(

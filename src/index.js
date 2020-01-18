@@ -5,8 +5,8 @@ const validatorResolver = require('./validatorResolver')
 const jsonSample = `{
     "block": "warning",
     "content": [
-        { "block": "text", "mods": { "size": "l" } },
-        { "block": "button", "mods": { "size": "l" } }
+        { "block": "button", "mods": { "size": "m" } },
+        { "block": "placeholder", "mods": { "size": "m" } }
     ]
 }`
 
