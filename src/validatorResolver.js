@@ -8,6 +8,8 @@ class ValidatorResolver {
         this.errors = errors
         this.state = state
         this.traverseJson = traverseJson
+
+        this.postProcessors = []
     }
 
     resolve(block) {
@@ -17,7 +19,7 @@ class ValidatorResolver {
                 warningValidator.validate()
                 break
             case 'text':
-                const textValidator = new TextValidator(block, this.errors, this.traverseJson, this.state)
+                const textValidator = new TextValidator(block, this.errors, this.traverseJson, this.state, this.postProcessors)
                 textValidator.validate()
                 break
             case 'grid':

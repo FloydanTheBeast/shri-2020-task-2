@@ -5,11 +5,11 @@ const validatorResolver = require('./validatorResolver')
 const jsonSample = `[
     {
         "block": "text",
-        "mods": { "type": "h1" }
+        "mods": { "type": "h3" }
     },
     {
         "block": "text",
-        "mods": { "type": "h1" }
+        "mods": { "type": "h2" }
     }
 ]`
 
@@ -24,4 +24,6 @@ jsonTraversal.traverseJson(
     parse(jsonSample, astSettings)
 )
 
-console.log(errors[0])
+jsonTraversal.postProcessing()
+
+console.log(errors)

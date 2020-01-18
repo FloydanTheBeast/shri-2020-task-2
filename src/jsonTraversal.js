@@ -37,5 +37,11 @@ class JsonTraversal {
                 break
         }
     }
+
+    postProcessing() {
+        this.validator.postProcessors.forEach(
+            postProcessor => postProcessor.call()
+        )
+    }
 }
 module.exports = JsonTraversal
