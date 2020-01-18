@@ -10,14 +10,17 @@ class GridValidator {
         this.columns = null
         this.functionalColumns = 0
         this.marketingColumns = 0
+
+        this.getColumnsMod()
     }
 
     getColumnsMod() {
         this.children.forEach(child => {
             if (child.key.value === 'mods')
                 child.value.children.forEach(mod => {
-                    if (mod.key.value === 'm-columns')
-                        this.columns = Number(child.value.value)
+                    if (mod.key.value === 'm-columns') {
+                        this.columns = Number(mod.value.value)
+                    }
                 })
         })
     }
@@ -48,6 +51,9 @@ class GridValidator {
             else if (blockTypes.marketing.includes(blockType))
                 this.marketingColumns += blockColumnSpan
         })
+
+        // FIXME: Проверять на наличие свойства 'elem', если оно есть - block != grid
+
         try {
             if (this.marketingColumns / this.columns > 0.5)
                 this.errors.push(

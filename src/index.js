@@ -2,16 +2,38 @@ const parse = require('json-to-ast')
 const JsonTraversal = require('./jsonTraversal')
 const validatorResolver = require('./validatorResolver')
 
-const jsonSample = `[
-    {
-        "block": "text",
-        "mods": { "type": "h3" }
+const jsonSample = `{
+    "block": "grid",
+    "mods": {
+        "m-columns": "10"
     },
-    {
-        "block": "text",
-        "mods": { "type": "h2" }
-    }
-]`
+    "content": [
+        {
+            "block": "grid",
+            "elem": "fraction",
+            "elemMods": {
+                "m-col": "8"
+            },
+            "content": [
+                {
+                    "block": "payment"
+                }
+            ]
+        },
+        {
+            "block": "grid",
+            "elem": "fraction",
+            "elemMods": {
+                "m-col": "2"
+            },
+            "content": [
+                {
+                    "block": "offer"
+                }
+            ]
+        }
+    ]
+ }`
 
 const astSettings = {
     loc: true
