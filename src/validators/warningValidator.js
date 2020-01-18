@@ -1,16 +1,16 @@
-const traverseJson = require('../jsonTraversal')
 const getBlockName = require('../utils/getBlockName')
 const textSizes = require('../consts/textSizes')
 const placeholderSizes = require('../consts/placeholderSizes')
 const compareLocation = require('../utils/compareLocation')
 
 class WarningValidator {
-    constructor(block, errors) {
+    constructor(block, errors, traverseJson) {
         this.children = block.children
         this.loc = block.loc
         this.content = block.children.find(child => child.key.value === 'content')
         this.primarySize = null
         this.errors = errors
+        this.traverseJson = traverseJson
 
         this.postProcessors = []
         this.placeholder = null
@@ -19,7 +19,7 @@ class WarningValidator {
     validate() {
         if (this.content)
             this.content.value.children.forEach(child => {
-                traverseJson(child, this.errors, this.blockValidatorResolver.bind(this))
+                this.traverseJson(child, this.errors, this.blockValidatorResolver.bind(this))
             })
         this.postProcessors.forEach(postProcessor => postProcessor.call())
     }
@@ -31,7 +31,7 @@ class WarningValidator {
                 break
             case 'button':
                 this.checkButtonSize(block)
-                this.postProcessors.push(this.checkPlaceholderBeforeButton.bind(this, block))
+                this.postProcessors.push(this.checkButtonPosition.bind(this, block))
                 break
             case 'placeholder':
                 this.checkPlaceholderSize(block)
@@ -104,7 +104,7 @@ class WarningValidator {
         }
     }
 
-    checkPlaceholderBeforeButton(block) {
+    checkButtonPosition(block) {
         if (this.placeholder && !compareLocation(this.placeholder, block))
             this.errors.push(
                 {

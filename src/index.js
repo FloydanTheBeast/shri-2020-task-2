@@ -1,14 +1,17 @@
 const parse = require('json-to-ast')
-const jsonTraversal = require('./jsonTraversal')
+const JsonTraversal = require('./jsonTraversal')
 const validatorResolver = require('./validatorResolver')
 
-const jsonSample = `{
-    "block": "warning",
-    "content": [
-        { "block": "button", "mods": { "size": "m" } },
-        { "block": "placeholder", "mods": { "size": "m" } }
-    ]
-}`
+const jsonSample = `[
+    {
+        "block": "text",
+        "mods": { "type": "h1" }
+    },
+    {
+        "block": "text",
+        "mods": { "type": "h1" }
+    }
+]`
 
 const astSettings = {
     loc: true
@@ -16,10 +19,9 @@ const astSettings = {
 
 const errors = []
 
-jsonTraversal(
-    parse(jsonSample, astSettings),
-    errors,
-    validatorResolver
+const jsonTraversal = new JsonTraversal(errors)
+jsonTraversal.traverseJson(
+    parse(jsonSample, astSettings)
 )
 
-console.log(errors)
+console.log(errors[0])
