@@ -1,6 +1,5 @@
 const parse = require('json-to-ast')
 const JsonTraversal = require('./src/jsonTraversal')
-const validatorResolver = require('./src/validatorResolver')
 
 const astSettings = {
     loc: true
