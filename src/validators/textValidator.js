@@ -58,7 +58,7 @@ class TextValidator {
         if (this.state.h1 && !compareLocation(this.state.h1[this.state.h1.length - 1], this.block))
             this.errors.push(
                 {
-                    'code': 'TEXT.INVALID_H2_POSTION',
+                    'code': 'TEXT.INVALID_H2_POSITION',
                     'error': 'Заголовок второго уровня не может находиться выше заголовка первого уровня',
                     'location': {
                         'start': { 'column': this.loc.start.column, 'line': this.loc.start.line },
@@ -72,7 +72,7 @@ class TextValidator {
         if (this.state.h2 && !compareLocation(this.state.h2[this.state.h2.length - 1], this.block))
             this.errors.push(
                 {
-                    'code': 'TEXT.INVALID_H3_POSTION',
+                    'code': 'TEXT.INVALID_H3_POSITION',
                     'error': 'Заголовок третьего уровня не может находиться выше заголовка второго уровня',
                     'location': {
                         'start': { 'column': this.loc.start.column, 'line': this.loc.start.line },

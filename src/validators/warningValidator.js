@@ -118,7 +118,7 @@ class WarningValidator {
         let placeholderSize
 
         if (!this.state.placeholders)
-            this.state = Object.assign(this.state, { placeholders: block })
+            this.state = Object.assign(this.state, { placeholders: [block] })
         else
             this.state.placeholders.push(block)
 

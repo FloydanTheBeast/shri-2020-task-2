@@ -39,9 +39,12 @@ class JsonTraversal {
     }
 
     postProcessing() {
-        this.validator.postProcessors.forEach(
-            postProcessor => postProcessor.call()
-        )
+        let postProcessors = this.validator.postProcessors.slice()
+
+        while (postProcessors.length > 0) {
+            let postProcessor = postProcessors.pop()
+            postProcessor.call()
+        }
     }
 }
 module.exports = JsonTraversal
