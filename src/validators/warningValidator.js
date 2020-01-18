@@ -4,16 +4,15 @@ const placeholderSizes = require('../consts/placeholderSizes')
 const compareLocation = require('../utils/compareLocation')
 
 class WarningValidator {
-    constructor(block, errors, traverseJson) {
+    constructor(block, errors, traverseJson, state, postProcessors) {
         this.children = block.children
         this.loc = block.loc
         this.content = block.children.find(child => child.key.value === 'content')
         this.primarySize = null
         this.errors = errors
         this.traverseJson = traverseJson
-
-        this.postProcessors = []
-        this.placeholder = null
+        this.state = state
+        this.postProcessors = postProcessors
     }
 
     validate() {
@@ -21,7 +20,6 @@ class WarningValidator {
             this.content.value.children.forEach(child => {
                 this.traverseJson(child, this.errors, this.blockValidatorResolver.bind(this))
             })
-        this.postProcessors.forEach(postProcessor => postProcessor.call())
     }
 
     blockValidatorResolver(block) {
@@ -44,9 +42,7 @@ class WarningValidator {
 
         block.children.forEach(child => {
             if (child.key.value === 'mods') {
-                const mods = child.value
-                
-                sizeMod = mods.children.find(mod => 
+                sizeMod = child.value.children.find(mod => 
                     mod.key.value === 'size'
                 ).value.value
 
@@ -83,7 +79,7 @@ class WarningValidator {
                                 textSize => textSize === this.primarySize
                             )
 
-                            let btnSizeIndex = textSizes.findIndex(
+                            let btnSizeIndex = textSizes.findIndex( 
                                 textSize => textSize === mod.value.value
                             )
 
@@ -105,7 +101,7 @@ class WarningValidator {
     }
 
     checkButtonPosition(block) {
-        if (this.placeholder && !compareLocation(this.placeholder, block))
+        if (this.state.placeholders && !compareLocation(this.state.placeholders[this.state.placeholders.length - 1], block))
             this.errors.push(
                 {
                     'code': 'WARNING.INVALID_BUTTON_POSITION',
@@ -119,8 +115,12 @@ class WarningValidator {
     }
 
     checkPlaceholderSize(block) {
-        this.placeholder = block
-        let placeholderSize = null
+        let placeholderSize
+
+        if (!this.state.placeholders)
+            this.state = Object.assign(this.state, { placeholders: block })
+        else
+            this.state.placeholders.push(block)
 
         block.children.forEach(child => {
             if (child.key.value === 'mods') {
@@ -132,15 +132,14 @@ class WarningValidator {
             }
         })
         
-        // FIXME: Прерывать дальнейшую проверку, если нашлась ошибка    
         if (!placeholderSizes.includes(placeholderSize)) 
             this.errors.push(
                 {
                     'code': 'WARNING.INVALID_PLACEHOLDER_SIZE',
                     'error': 'Недопустимый размер placeholder',
                     'location': {
-                        'start': { 'column': this.loc.start.column, 'line': this.loc.start.line },
-                        'end': { 'column': this.loc.end.column, 'line': this.loc.end.line }
+                        'start': { 'column': block.loc.start.column, 'line': block.loc.start.line },
+                        'end': { 'column': block.loc.end.column, 'line': block.loc.end.line }
                     }
                 }
             )

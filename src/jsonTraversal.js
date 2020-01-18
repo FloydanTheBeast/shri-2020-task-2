@@ -26,7 +26,7 @@ class JsonTraversal {
                 })
                 break
             case 'Property':
-                if (data.key.value === 'content') {
+                if (data.key.value === 'content' || data.key.value === 'mix') {
                     this.traverseJson(data.value, errors, validator)
                 }
                 break

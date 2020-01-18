@@ -15,7 +15,7 @@ class ValidatorResolver {
     resolve(block) {
         switch (getBlockName(block)) {
             case 'warning':
-                const warningValidator = new WarningValidator(block, this.errors, this.traverseJson)
+                const warningValidator = new WarningValidator(block, this.errors, this.traverseJson, this.postProcessors)
                 warningValidator.validate()
                 break
             case 'text':
