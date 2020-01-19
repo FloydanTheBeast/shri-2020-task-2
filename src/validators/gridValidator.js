@@ -52,8 +52,6 @@ class GridValidator {
                 this.marketingColumns += blockColumnSpan
         })
 
-        // FIXME: Проверять на наличие свойства 'elem', если оно есть - block != grid
-
         try {
             if (this.marketingColumns / this.columns > 0.5)
                 this.errors.push(
